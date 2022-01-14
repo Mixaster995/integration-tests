@@ -15,4 +15,4 @@ require (
 	k8s.io/client-go v0.20.5
 )
 
-replace github.com/networkservicemesh/gotestmd => github.com/Mixaster995/gotestmd v0.0.0-20220113095020-4e212535dbec
+replace github.com/networkservicemesh/gotestmd => github.com/Mixaster995/gotestmd v0.0.0-20220114063752-bec09e51e2f8
