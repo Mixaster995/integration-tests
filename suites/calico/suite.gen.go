@@ -5,16 +5,18 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	"github.com/networkservicemesh/integration-tests/extensions/base"
+	"github.com/networkservicemesh/integration-tests/suites/basic"
 	"github.com/networkservicemesh/integration-tests/suites/spire"
 )
 
 type Suite struct {
 	base.Suite
 	spireSuite spire.Suite
+	basicSuite basic.Suite
 }
 
 func (s *Suite) SetupSuite() {
-	parents := []interface{}{&s.Suite, &s.spireSuite}
+	parents := []interface{}{&s.Suite, &s.spireSuite, &s.basicSuite}
 	for _, p := range parents {
 		if v, ok := p.(suite.TestingSuite); ok {
 			v.SetT(s.T())
@@ -23,13 +25,6 @@ func (s *Suite) SetupSuite() {
 			v.SetupSuite()
 		}
 	}
-	r := s.Runner("../deployments-k8s/examples/calico")
-	s.T().Cleanup(func() {
-		r.Run(`kubectl delete mutatingwebhookconfiguration --all` + "\n" + `kubectl delete ns nsm-system`)
-	})
-	r.Run(`kubectl create ns nsm-system`)
-	r.Run(`kubectl apply -k https://github.com/networkservicemesh/deployments-k8s/examples/calico/?ref=103f0149508a5dbbb776b9d7941c28f326d146ed`)
-	r.Run(`WH=$(kubectl get pods -l app=admission-webhook-k8s -n nsm-system --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')` + "\n" + `kubectl wait --for=condition=ready --timeout=1m pod ${WH} -n nsm-system`)
 }
 func (s *Suite) TestKernel2Kernel_ipv6() {
 	r := s.Runner("../deployments-k8s/examples/features/ipv6/Kernel2Kernel_ipv6")
